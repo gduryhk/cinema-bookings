@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/gdury/cinema-bookings/models"
+	"github.com/gduryhk/cinema-bookings/models"
 )
 
 type (
