@@ -11,5 +11,5 @@ before_install:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push gdury/cinema-users:$TRAVIS_BUILD_NUMBER;
+    docker push gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER;
     fi
