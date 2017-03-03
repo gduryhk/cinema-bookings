@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mmorejon/cinema/bookings/common"
-	"github.com/mmorejon/cinema/bookings/routers"
+	"github.com/gduryhk/cinema-bookings/common"
+	"github.com/gduryhk/cinema-bookings/routers"
 )
 
 // Entry point for the program
