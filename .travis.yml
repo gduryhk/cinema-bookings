@@ -1,7 +1,7 @@
 sudo: required
 language: go
 addons:
-  ssh_known_hosts: $IP_SERVER
+  ssh_known_hosts: 52.221.244.175
 services:
 - docker
 before_script:
@@ -15,9 +15,9 @@ before_install:
 after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   docker push gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER; fi
-- ssh docker@$IP_SERVER 'docker stop cinema-bookings || true';
-- ssh docker@$IP_SERVER 'docker rm -f cinema-bookings || true';
-- ssh docker@$IP_SERVER "docker run -d --name cinema-bookings --env VIRTUAL_HOST=bookings.dury.pro
+- ssh docker@52.221.244.175 'docker stop cinema-bookings || true';
+- ssh docker@52.221.244.175 'docker rm -f cinema-bookings || true';
+- ssh docker@52.221.244.175 "docker run -d --name cinema-bookings --env VIRTUAL_HOST=bookings.dury.pro
   --link db gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER";
 env:
   global:
