@@ -15,7 +15,7 @@ WORKDIR /go/src/github.com/gduryhk/cinema-bookings
 RUN go install github.com/gduryhk/cinema-bookings
 
 # Run the bookings microservice when the container starts.
-ENTRYPOINT /go/bin/bookings
+ENTRYPOINT /go/bin/cinema-bookings
 
 # Service listens on port 8080.
 EXPOSE 8080

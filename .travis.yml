@@ -1,15 +1,24 @@
 sudo: required
-
 language: go
-
+addons:
+  ssh_known_hosts: $IP_SERVER
 services:
-  - docker
-
+- docker
+before_script:
+- openssl aes-256-cbc -pass "pass:$TRAVIS_CI_SECRET" -in ./.secret -out ./ecs.pem
+  -d -a
+- eval "$(ssh-agent -s)"
+- chmod 400 ecs.pem
+- ssh-add ecs.pem
 before_install:
-  - docker build -t gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER .
-
+- docker build -t gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER .
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER;
-    fi
+- if [ "$TRAVIS_BRANCH" == "master" ]; then docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  docker push gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER; fi
+- ssh docker@$IP_SERVER 'docker stop cinema-bookings || true';
+- ssh docker@$IP_SERVER 'docker rm -f cinema-bookings || true';
+- ssh docker@$IP_SERVER "docker run -d --name cinema-bookings --env VIRTUAL_HOST=bookings.dury.pro
+  --link db gdury/cinema-bookings:$TRAVIS_BUILD_NUMBER";
+env:
+  global:
+    secure: Qe9npld2tXcM0qj7tKATUD+4Jq69ZfZkDeEOx6ohz6bii4z/I8FV8Fq7KFQ61EC5szH8u1kmCUpUlojBkehDmwVy2qT+AqAW/gE1MnO5tYWki1XmJyP+MK87Fre6hOt9g/l8ONDAnfLRLQ9YdLTQb0psGPYMbrh6XVSt3AJKhtPNQlLIhdKRbkq99Ibqkw8NqL1xVUijy5gKmE1lWRwwk3aVT0ygA53R4NiIKCAtJXGVdskCRFjMneBHF73s2Sp3+Wjiex506gZzg1S8WdNqKKnkVYqWaLge4dKObrAcMBGCDepkuWzjfgS5RTBAmuOo0TDQt0A/icA0Ngh7Q242cdYIUX7wovNtVWUBKi11qhNt8iJEabi0G27CfC9bXiSjAoHKYy4I821akVBtSuE+wADJYRLxrxsrEXc+RK9t0nfhG7G1/oOaa5g5/bbYLqy6Nq9QMxAPEDMXmaOyHzW9xSamptM727Wp2KIB0oe8Y49Oh9piap+RLNMBIKYfncQH8YXC6KNRS9k7JzlYdtZszwhfUiTg1fn2fhgy1Rjvnv9SE8Ivc4mLC8NSu9wzIczM5cEy5PSPa9oB5CfA51H+8HXVCr7oe5EiEcb6Xax8zsw79r1Hm8IAfwqhmpoeQRRCkJZMBviAr6TNRFj/w9OJcbq+1qBh0ACKitNo09/7b6I=
